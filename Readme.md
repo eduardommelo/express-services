@@ -5,7 +5,7 @@ Ferramenta focado em auxiliar no desenvolvimento de web server tanto para client
 ## Exemplo de inicialização
 
 ```
-    npm install eduardommelo/express-services
+npm install eduardommelo/express-services
 ```
 
 ```js
