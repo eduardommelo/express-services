@@ -1,8 +1,8 @@
 {
-  "name": "server-side",
+  "name": "express-services",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "/src/Server.js",
   "scripts": {
     "test": "jest"
   },

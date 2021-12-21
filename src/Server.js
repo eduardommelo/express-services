@@ -5,6 +5,8 @@ const { extname } = require("path");
 const ejs = require("ejs");
 const { ERROR_PAGE } = require("../src/presentation/ServerRequest");
 
+const RouterManager = require("../src/util/services/RouterManager");
+
 /**
  * @param {Object} options - Responsável pelas opçoes de configuração de server-side.
  *
@@ -39,6 +41,8 @@ module.exports = class Client {
     };
 
     this.depedences = options?.depedences || {};
+
+    this.group = new RouterManager(this, this.app);
   }
 
   /**
@@ -130,9 +134,14 @@ module.exports = class Client {
         return new Error("Instance routes is not declareted.");
 
       fileReq = new fileReq(this);
+
+      const route = fileReq.group
+        ? this.group.routes[fileReq.group].route + fileReq.route
+        : fileReq.route;
+
       if (fileReq.publicURL)
         this.app[fileReq.method.toLowerCase()](
-          fileReq.route,
+          route,
           this._onMiddlewareStart(fileReq.middleware),
           async (req, res) => {
             const routeReturn = await fileReq.run(req, res);
@@ -141,7 +150,7 @@ module.exports = class Client {
         );
       else
         this.app[fileReq.method.toLowerCase()](
-          fileReq.route,
+          route,
           this._onMiddlewareStart(fileReq.middleware),
           fileReq.run
         );
@@ -156,7 +165,7 @@ module.exports = class Client {
   _loadFolders(folder, callback = () => {}) {
     const files = readdirSync(folder);
     for (const file of files) {
-      const filePath = `${__dirname}/../${folder}/${file}`;
+      const filePath = `${__dirname}/../../${folder}/${file}`;
       if (!statSync(filePath).isDirectory()) {
         if (extname(file) === ".js") {
           const fileReq = require(filePath);
