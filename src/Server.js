@@ -165,7 +165,7 @@ module.exports = class Client {
   _loadFolders(folder, callback = () => {}) {
     const files = readdirSync(folder);
     for (const file of files) {
-      const filePath = `${__dirname}/../../${folder}/${file}`;
+      const filePath = `${__dirname}/../../../${folder}/${file}`;
       if (!statSync(filePath).isDirectory()) {
         if (extname(file) === ".js") {
           const fileReq = require(filePath);
