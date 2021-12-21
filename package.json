@@ -2,7 +2,7 @@
   "name": "express-services",
   "version": "1.0.0",
   "description": "",
-  "main": "/src/Index.js",
+  "main": "Index.js",
   "scripts": {
     "test": "jest"
   },
