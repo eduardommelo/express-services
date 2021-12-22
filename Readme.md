@@ -2,6 +2,8 @@
 
 Ferramenta focado em auxiliar no desenvolvimento de web server tanto para client side quanto para server side, será constantemente atualizado conforme alguma ferramentas que são bastante utilizadas serem adicionado a essa framework.
 
+**OBS:** Focado para meus trabalhos exclusivamente freelancer.
+
 ## Exemplo de inicialização
 
 ```
@@ -9,7 +11,7 @@ npm install eduardommelo/express-services
 ```
 
 ```js
-const Server = require("express-services");
+const { Server } = require("express-services");
 
 // instancia o Server
 const app = new Server({
