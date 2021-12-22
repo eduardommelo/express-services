@@ -84,7 +84,8 @@ module.exports = class Client {
     this.app.get("*", (req, res, next) => {
       res.status(404);
       if (res.statusCode !== 200) {
-        if (this.errors?.api) res.status(res.statusCode).json(this.errors?.api);
+        if (this.errors?.api)
+          return res.status(res.statusCode).json(this.errors?.api);
 
         res
           .status(res.statusCode)
