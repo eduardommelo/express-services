@@ -9,7 +9,7 @@ npm install eduardommelo/express-services
 ```
 
 ```js
-const Server = require("express-services");
+const { Server } = require("express-services");
 
 // instancia o Server
 const app = new Server({
