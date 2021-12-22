@@ -84,6 +84,11 @@ module.exports = class Client {
     this.app.get("*", (req, res, next) => {
       res.status(404);
       if (res.statusCode !== 200) {
+        if (this.errors?.api) {
+          res
+            .status(res.statusCode)
+            .json({ status: 404, message: "Unauthorized" });
+        }
         res
           .status(res.statusCode)
           .render(

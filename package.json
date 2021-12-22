@@ -7,7 +7,7 @@
     "test": "jest"
   },
   "keywords": [],
-  "author": "",
+  "author": "Eduardo Melo",
   "license": "ISC",
   "dependencies": {
     "cors": "^2.8.5",
