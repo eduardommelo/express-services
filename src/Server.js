@@ -147,7 +147,6 @@ module.exports = class Client {
           route,
           this._onMiddlewareStart(fileReq.middleware),
           async (req, res) => {
-            fileReq = new fileReq(this);
             const routeReturn = await fileReq.run(req, res);
             res.render(fileReq.publicURL + ".ejs", routeReturn);
           }
@@ -157,7 +156,6 @@ module.exports = class Client {
           route,
           this._onMiddlewareStart(fileReq.middleware),
           async (req, res) => {
-            fileReq = new fileReq(this);
             fileReq.run(req, res);
           }
         );
