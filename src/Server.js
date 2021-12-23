@@ -157,7 +157,7 @@ module.exports = class Client {
           this._onMiddlewareStart(fileReq.middleware),
           async (req, res, next) => await fileReq.run(req, res, next);
           
-        );
+        
     });
   }
   /**
