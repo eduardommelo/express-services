@@ -156,7 +156,10 @@ module.exports = class Client {
         this.app[fileReq.method.toLowerCase()](
           route,
           this._onMiddlewareStart(fileReq.middleware),
-          fileReq.run
+          async (req, res) => {
+            fileReq = new fileReq(this);
+            fileReq.run(req, res);
+          }
         );
     });
   }
