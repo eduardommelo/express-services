@@ -113,7 +113,8 @@ module.exports = class Client {
       if (typeof fileReq !== "function")
         return new Error("Instance middlewares is not declareted.");
       fileReq = new fileReq(this);
-      this.service.middleware[fileReq.name] = fileReq.run;
+      this.service.middleware[fileReq.name] = (req, res, next) =>
+        fileReq.run(req, res, next);
     });
   }
 
