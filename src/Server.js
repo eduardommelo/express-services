@@ -1,4 +1,5 @@
 const express = require("express");
+const https = require('https')
 const { readdirSync, statSync } = require("fs");
 const cors = require("cors");
 const { extname } = require("path");
@@ -27,11 +28,12 @@ module.exports = class Client {
     this.isCors = options.cors || false;
     this.isEjs = options.ejs || false;
 
+    this.ssl = options.ssl ?  this._verifyParams(options.ssl, 'ssl') || false : false
     this.path = {
       routes: options.path?.routes || "routes",
       middleware: options.path?.middleware || "middleware",
-      views: options.path?.views || `${__dirname}/../src/views`,
-      public: options.path?.public || `${__dirname}/../src/public`,
+      views: options.path?.views || `views`,
+      public: options.path?.public || `public`,
     };
 
     this.errors = options?.errors || false;
@@ -123,8 +125,7 @@ module.exports = class Client {
    * Inicializa o servidor express
    */
   _expressListen(callback) {
-    console.log("iniciando", this.port);
-    this.app.listen(this.port, (err) => callback(err, true));
+    this.app.listen(this.port, (err) => callback(err, this) );
   }
 
   /**
@@ -169,10 +170,10 @@ module.exports = class Client {
   _loadFolders(folder, callback = () => {}) {
     const files = readdirSync(folder);
     for (const file of files) {
-      const filePath = `${__dirname}/../../../${folder}/${file}`;
+      const filePath = `${folder}/${file}`;
       if (!statSync(filePath).isDirectory()) {
         if (extname(file) === ".js") {
-          const fileReq = require(filePath);
+          const fileReq = require(process.cwd() + '/' + filePath);
           callback(fileReq, file, filePath);
         }
       } else this._loadFolders(`${folder}/${file}`, callback);
@@ -190,5 +191,18 @@ module.exports = class Client {
     }
 
     return callbacks;
+  }
+
+  /**
+   *  Método de validação de informações
+   */
+  _verifyParams (options, type) {
+    
+    switch (type) {
+      case 'ssl':
+        if (!options?.cert) throw new Error('[SSL] cert has undefined')
+        if (!options?.key) throw new Error('[SSL] key has undefined')
+      break
+    }
   }
 };
