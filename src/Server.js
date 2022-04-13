@@ -1,12 +1,14 @@
 const express = require("express");
-const https = require('https')
-const { readdirSync, statSync } = require("fs");
+const cookieParser = require("cookie-parser");
+const https = require("https");
+const { readdirSync, statSync, readFileSync } = require("fs");
 const cors = require("cors");
 const { extname } = require("path");
 const ejs = require("ejs");
 const { ERROR_PAGE } = require("../src/presentation/ServerRequest");
 
 const RouterManager = require("../src/util/services/RouterManager");
+const JWT = require("./util/services/JWT");
 
 /**
  * @param {Object} options - Responsável pelas opçoes de configuração de server-side.
@@ -25,10 +27,17 @@ module.exports = class Client {
     this.app = express();
 
     this.routes = options.routes || "routes";
-    this.isCors = options.cors || false;
+    this.auth = options.auth || false;
+    this.cors = options.cors
+      ? this._verifyParams(options.cors, "cors") || false
+      : false;
     this.isEjs = options.ejs || false;
 
-    this.ssl = options.ssl ?  this._verifyParams(options.ssl, 'ssl') || false : false
+    this.isCookie = options.cookie || false;
+    this.ssl = options.ssl
+      ? this._verifyParams(options.ssl, "ssl") || false
+      : false;
+
     this.path = {
       routes: options.path?.routes || "routes",
       middleware: options.path?.middleware || "middleware",
@@ -45,6 +54,7 @@ module.exports = class Client {
     this.depedences = options?.depedences || {};
 
     this.group = new RouterManager(this, this.app);
+    this.jwt = new JWT(this);
   }
 
   /**
@@ -60,7 +70,8 @@ module.exports = class Client {
         })
       );
 
-      if (this.isCors) this.app.use(cors());
+      if (this.cors) this.app.use(cors(this.cors));
+      if (this.isCookie) this.app.use(cookieParser());
       if (this.isEjs) {
         this.app.engine("html", ejs.renderFile);
         this.app.set("view engine", "html");
@@ -125,7 +136,20 @@ module.exports = class Client {
    * Inicializa o servidor express
    */
   _expressListen(callback) {
-    this.app.listen(this.port, (err) => callback(err, this) );
+    const resolve = this._resolveServer();
+    resolve.listen(this.port, (err) => callback(err, this));
+  }
+
+  _resolveServer() {
+    return this.ssl
+      ? https.createServer(
+          {
+            key: readFileSync(this.ssl.key),
+            cert: readFileSync(this.ssl.cert),
+          },
+          this.app
+        )
+      : this.app;
   }
 
   /**
@@ -173,7 +197,7 @@ module.exports = class Client {
       const filePath = `${folder}/${file}`;
       if (!statSync(filePath).isDirectory()) {
         if (extname(file) === ".js") {
-          const fileReq = require(process.cwd() + '/' + filePath);
+          const fileReq = require(process.cwd() + "/" + filePath);
           callback(fileReq, file, filePath);
         }
       } else this._loadFolders(`${folder}/${file}`, callback);
@@ -196,13 +220,17 @@ module.exports = class Client {
   /**
    *  Método de validação de informações
    */
-  _verifyParams (options, type) {
-    
+  _verifyParams(options, type) {
     switch (type) {
-      case 'ssl':
-        if (!options?.cert) throw new Error('[SSL] cert has undefined')
-        if (!options?.key) throw new Error('[SSL] key has undefined')
-      break
+      case "cors":
+        if (!options?.origin) throw new Error("[CORS] origin has undefined");
+        if (!options?.optionsSuccessStatus)
+          throw new Error("[CORS] optionsSuccessStatus has undefined");
+        break;
+      case "ssl":
+        if (!options?.cert) throw new Error("[SSL] cert has undefined");
+        if (!options?.key) throw new Error("[SSL] key has undefined");
+        break;
     }
   }
 };
