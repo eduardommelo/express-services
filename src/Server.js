@@ -70,7 +70,8 @@ module.exports = class Client {
         })
       );
 
-      if (this.cors) this.app.use(cors(this.cors));
+      this.app.use(this.cors ? cors(this.cors) : cors());
+
       if (this.isCookie) this.app.use(cookieParser());
       if (this.isEjs) {
         this.app.engine("html", ejs.renderFile);
