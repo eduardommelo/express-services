@@ -50,7 +50,7 @@ module.exports = class Client {
     this.service = {
       middleware: [],
     };
-
+    this.extended = {}
     this.depedences = options?.depedences || {};
 
     this.group = new RouterManager(this, this.app);
@@ -233,5 +233,9 @@ module.exports = class Client {
         if (!options?.key) throw new Error("[SSL] key has undefined");
         break;
     }
+  }
+
+  extend (instance) {
+    this.extended = instance
   }
 };
