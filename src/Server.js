@@ -52,6 +52,7 @@ module.exports = class Client {
     this.service = {
       middleware: [],
     };
+
     this.extended = {};
     this.depedences = options?.depedences || {};
 
