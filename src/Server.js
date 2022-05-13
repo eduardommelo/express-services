@@ -1,5 +1,6 @@
 const express = require("express");
 const cookieParser = require("cookie-parser");
+const expressFileUpload = require("express-fileupload");
 const https = require("https");
 const { readdirSync, statSync, readFileSync } = require("fs");
 const cors = require("cors");
@@ -34,6 +35,7 @@ module.exports = class Client {
     this.isEjs = options.ejs || false;
 
     this.isCookie = options.cookie || false;
+    this.upload = options.upload || false;
     this.ssl = options.ssl
       ? this._verifyParams(options.ssl, "ssl") || false
       : false;
@@ -50,7 +52,8 @@ module.exports = class Client {
     this.service = {
       middleware: [],
     };
-    this.extended = {}
+
+    this.extended = {};
     this.depedences = options?.depedences || {};
 
     this.group = new RouterManager(this, this.app);
@@ -70,6 +73,14 @@ module.exports = class Client {
         })
       );
 
+      if (this.upload)
+        this.app.use(
+          this.upload === true
+            ? expressFileUpload()
+            : expressFileUpload({
+                limits: this.upload.limits,
+              })
+        );
       this.app.use(this.cors ? cors(this.cors) : cors());
 
       if (this.isCookie) this.app.use(cookieParser());
@@ -235,7 +246,7 @@ module.exports = class Client {
     }
   }
 
-  extend (instance) {
-    this.extended = instance
+  extend(instance) {
+    this.extended = instance;
   }
 };
