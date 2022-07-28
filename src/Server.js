@@ -89,7 +89,7 @@ module.exports = class Client {
         this.app.set("view engine", "html");
         this.app.set("views", this.path.views);
       }
-      this.app.use(express.static(this.path.public));
+      if (this.path.public) this.app.use(express.static(this.path.public));
 
       if (this.path.middleware) this._initMiddleware(this.path.middleware);
       if (this.path.routes) this._initRoutes(this.path.routes);
