@@ -236,8 +236,6 @@ module.exports = class Client {
     switch (type) {
       case "cors":
         if (!options?.origin) throw new Error("[CORS] origin has undefined");
-        if (!options?.optionsSuccessStatus)
-          throw new Error("[CORS] optionsSuccessStatus has undefined");
         break;
       case "ssl":
         if (!options?.cert) throw new Error("[SSL] cert has undefined");
