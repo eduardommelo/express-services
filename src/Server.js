@@ -41,10 +41,10 @@ module.exports = class Client {
       : false;
 
     this.path = {
-      routes: options.path?.routes || "routes",
-      middleware: options.path?.middleware || "middleware",
-      views: options.path?.views || `views`,
-      public: options.path?.public || `public`,
+      routes: options.path?.routes || false,
+      middleware: options.path?.middleware || false,
+      views: options.path?.views || false,
+      public: options.path?.public || false,
     };
 
     this.errors = options?.errors || false;
