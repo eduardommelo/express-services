@@ -242,6 +242,7 @@ module.exports = class Client {
         if (!options?.key) throw new Error("[SSL] key has undefined");
         break;
     }
+    return options;
   }
 
   extend(instance) {
